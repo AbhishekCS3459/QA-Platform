@@ -1,0 +1,4 @@
+[submodule "question-app"]
+	path = question-app
+	url = https://github.com/AbhishekCS3459/QA-Platform-UI.git
+
