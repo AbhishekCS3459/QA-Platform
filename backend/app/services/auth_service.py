@@ -58,6 +58,7 @@ def login_user(db: Session, email: str, password: str) -> Optional[dict]:
             "username": user.username,
             "email": user.email,
             "role": user.role.value,
+            "is_active": user.is_active,
         }
     }
 

@@ -1,14 +1,8 @@
-"""
-WebSocket Endpoint
-Real-time communication support
-"""
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
-from typing import List, Dict, Any
+from typing import List
 import json
-import logging
 
 router = APIRouter()
-logger = logging.getLogger(__name__)
 
 
 class ConnectionManager:
@@ -18,14 +12,10 @@ class ConnectionManager:
     async def connect(self, websocket: WebSocket):
         await websocket.accept()
         self.active_connections.append(websocket)
-        logger.info(f"✅ WebSocket connected. Total connections: {len(self.active_connections)}")
-        print(f"✅ WebSocket connected. Total connections: {len(self.active_connections)}")
 
     def disconnect(self, websocket: WebSocket):
         if websocket in self.active_connections:
             self.active_connections.remove(websocket)
-            logger.info(f"🔌 WebSocket disconnected. Total connections: {len(self.active_connections)}")
-            print(f"🔌 WebSocket disconnected. Total connections: {len(self.active_connections)}")
 
     async def send_personal_message(self, message: str, websocket: WebSocket):
         await websocket.send_text(message)
@@ -43,14 +33,6 @@ manager = ConnectionManager()
 
 @router.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
-    """
-    WebSocket endpoint for real-time communication
-    
-    Handles:
-    - Connection establishment
-    - Message receiving and broadcasting
-    - Connection cleanup on disconnect
-    """
     await manager.connect(websocket)
     try:
         welcome_msg = json.dumps({

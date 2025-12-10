@@ -9,25 +9,42 @@ from app.core.config import settings
 from app.router.v1.router import api_router
 from app.utils.database import engine, Base
 
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S"
+)
+
 logger = logging.getLogger(__name__)
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """Lifespan context manager for startup and shutdown events"""
+    logger.info("Initializing database connection...")
     try:
         Base.metadata.create_all(bind=engine)
+        logger.info("Database tables created/verified")
+        
         from sqlalchemy import text
         with engine.connect() as conn:
-            conn.execute(text("SELECT 1"))
-        logger.info("✅ Database connected successfully")
-        print("✅ Database connected successfully")
+            result = conn.execute(text("SELECT 1"))
+            result.fetchone()
+        logger.info("Database connected successfully")
+        
+        try:
+            from app.utils.init_vector_store import init_vector_store
+            init_vector_store()
+            logger.info("Vector store initialized")
+        except Exception as e:
+            logger.warning(f"Vector store initialization skipped: {e}")
     except Exception as e:
-        logger.error(f"❌ Database connection failed: {e}")
-        print(f"❌ Database connection failed: {e}")
+        logger.error(f"Database connection failed: {e}")
         raise
     
+    logger.info("Application startup complete")
     yield
+    
+    logger.info("Application shutdown initiated")
 
 
 app = FastAPI(
@@ -53,7 +70,10 @@ app.include_router(api_router, prefix=settings.API_V1_PREFIX)
 
 @app.exception_handler(Exception)
 async def global_exception_handler(request, exc):
-    """Global exception handler for unhandled errors"""
+    from fastapi import HTTPException
+    if isinstance(exc, HTTPException):
+        raise exc
+    
     return JSONResponse(
         status_code=500,
         content={
@@ -66,7 +86,6 @@ async def global_exception_handler(request, exc):
 
 @app.get("/")
 async def root():
-    """Root endpoint"""
     return {
         "message": "Q&A Dashboard API",
         "version": settings.VERSION,

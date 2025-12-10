@@ -45,6 +45,7 @@ async def register(
                 "username": user.username,
                 "email": user.email,
                 "role": user.role.value,
+                "is_active": user.is_active,
             }
         }
     except ValueError as e:

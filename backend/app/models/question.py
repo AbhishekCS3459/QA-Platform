@@ -24,6 +24,9 @@ class Question(Base):
     message = Column(String, nullable=False)
     status = Column(SQLEnum(QuestionStatus), default=QuestionStatus.PENDING, nullable=False)
     user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
+    classification_label = Column(String, nullable=True)
+    moderation_action = Column(String, nullable=True)
+    moderation_reason = Column(String, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
 
