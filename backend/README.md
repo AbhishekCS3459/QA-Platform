@@ -16,36 +16,18 @@
 
 ## Environment Variables (`.env` template)
 ```
-# App
-PROJECT_NAME=Q&A Dashboard API
-VERSION=1.0.0
-API_V1_PREFIX=/api/v1
 HOST=0.0.0.0
 PORT=8000
-ENVIRONMENT=development  # development|production
+ENVIRONMENT=development
+CORS_ORIGINS=http://localhost:3000,http://localhost:3001
 
-# Database
-DATABASE_URL=postgresql+psycopg2://user:pass@localhost:5432/db_name
-TIMESCALE_SERVICE_URL=http://localhost:9000  # if applicable
+# Database URL
+DATABASE_URL=postgresql://postgres:password@localhost:5432/postgres
+# vector url 
+TIMESCALE_SERVICE_URL=postgres://postgres:password@localhost:5432/postgres
 
-# Security
-SECRET_KEY=change-me
-
-# CORS (comma-separated origins)
-CORS_ORIGINS=http://localhost:3000
-
-# Groq / LLM
-GROQ_API_KEY=your-groq-key
-GROQ_MODEL=llama-3.3-70b-versatile
-GROQ_TEMPERATURE=1.0
-GROQ_MAX_COMPLETION_TOKENS=8192
-GROQ_TOP_P=1.0
-GROQ_REASONING_EFFORT=
-
-# Embeddings / Vector store
-EMBEDDING_MODEL=all-MiniLM-L6-v2
-VECTOR_TABLE_NAME=question_embeddings
-VECTOR_EMBEDDING_DIMENSIONS=384
+SECRET_KEY="secret"
+GROQ_API_KEY=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
 ```
 
 ## Development Notes
